@@ -60,6 +60,7 @@ openai
     if (!process.env.GIT_AUTOCOMMIT) {
       console.log(`Please set GIT_AUTOCOMMIT to commit with following command:\n ${command}`);
     } else {
+      console.log(`Committing with following command:\n ${command}`);
       execSync(command, {encoding: 'utf8'});
     }
   });
