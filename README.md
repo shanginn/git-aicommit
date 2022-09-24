@@ -39,3 +39,18 @@ export OPENAI_API_KEY=YOUR_OPEN_API_KEY
 export GIT_AI_AUTOCOMMIT=1
 git-aicommit
 ```
+
+Or even better: make an alias and export envs:
+
+```bash
+alias gai='git-aicommit'
+export OPENAI_API_KEY=YOUR_OPEN_API_KEY
+export GIT_AI_AUTOCOMMIT=1
+
+# And run it:
+gai
+```
+
+It that simple!
+    
+
