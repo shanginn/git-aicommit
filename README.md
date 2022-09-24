@@ -20,8 +20,6 @@ For now this cli tool uses env variables to pass params, because this is simple 
   the commit will be made automatically.
   Otherwise, you will just see the suggested commit.
 
-```bash 
-
 ```bash
 OPENAI_API_KEY=YOUR_OPEN_API_KEY GIT_AI_AUTOCOMMIT=1 git-aicommit
 ```
