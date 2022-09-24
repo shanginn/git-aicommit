@@ -24,7 +24,6 @@ const diff = execSync(
     {encoding: 'utf8'}
 );
 
-// if diff is empty exit
 if (!diff) {
     console.error("Diff seems empty. Please commit manually.");
     process.exit(1);
