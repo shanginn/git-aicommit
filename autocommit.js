@@ -61,10 +61,10 @@ openai
   })
   .then((data) => {
     const commitMessage = data.data.choices[0].text;
-    const command = `git add --all && git commit -m "${commitMessage}"`;
+    const command = `git add --all && git commit -m "${commitMessage.replace(/"/g, '\\"');}"`;
 
-    if (!process.env.GIT_AUTOCOMMIT) {
-      console.log(`Please set GIT_AUTOCOMMIT to commit with following command:\n ${command}`);
+    if (!process.env.GIT_AI_AUTOCOMMIT) {
+      console.log(`Please set GIT_AI_AUTOCOMMIT to commit with following command:\n ${command}`);
     } else {
       console.log(`Committing with following command:\n ${command}`);
       execSync(command, {encoding: 'utf8'});
