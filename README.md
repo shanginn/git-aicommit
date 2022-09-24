@@ -15,7 +15,7 @@ npm install -g git-aicommit
 ## Usage
 
 For now this cli tool uses env variables to pass params, because this is simple PoC.
-- `OPENAI_API_KEY` - your OpenAI API key
+- `OPENAI_API_KEY` - your OpenAI API key (you can get one at [https://beta.openai.com/account/api-keys]())
 - `GIT_AI_AUTOCOMMIT` - If this env is present and not empty,
   the commit will be made automatically.
   Otherwise, you will just see the suggested commit.
