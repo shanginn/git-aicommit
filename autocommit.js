@@ -63,7 +63,8 @@ openai
     const commitMessage = data.data.choices[0].text;
     const command = `git add --all && git commit -m "${commitMessage.replace(/"/g, '\\"')}"`;
 
-    if (!process.env.GIT_AI_AUTOCOMMIT) {
+    // Check if process.env.GIT_AI_AUTOCOMMIT exists and is set to 1 or true, otherwise just warn.
+    if (!(process.env.GIT_AI_AUTOCOMMIT && process.env.GIT_AI_AUTOCOMMIT.match(/^(1|true)$/))) {
       console.log(`Please set GIT_AI_AUTOCOMMIT to commit with following command:\n ${command}`);
     } else {
       console.log(`Committing with following command:\n ${command}`);
