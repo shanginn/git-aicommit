@@ -2,10 +2,7 @@
 
 Tired of writing commit messages? Let the computer do it for you!
 
-<p align="center">
-  <img width="600" src="demo.svg">
-</p>
-
+[![asciicast](demo.svg)](https://asciinema.org/a/fpL5Dkd74xO8yRTM15O49zOF9)
 
 ## Installation
 
