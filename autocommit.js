@@ -84,6 +84,7 @@ function generatePrompt() {
           output: process.stdout
         });
         input.question(`Commit with the above message? [y/r/N]: `, (answer) => {
+          input.close();
           if (answer.match(/^(y|Y)$/)) {
             console.log(`Committing with following command:\n ${command}`);
             execSync(command, {encoding: 'utf8'});
@@ -92,7 +93,6 @@ function generatePrompt() {
           } else {
             console.log("Not committing.");
           }
-          input.close();
         });
       }
 
