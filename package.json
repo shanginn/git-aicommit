@@ -1,0 +1,12 @@
+{
+  "name": "autocommit",
+  "version": "1.0.0",
+  "description": "Generates auto commit messages with OpenAI GPT3 model",
+  "main": "index.js",
+  "repository": "https://github.com/shanginn/autocommit",
+  "author": "shanginn@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "openai": "^3.0.0"
+  }
+}
