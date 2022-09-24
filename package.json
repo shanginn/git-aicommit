@@ -7,6 +7,7 @@
   "author": "shanginn@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^16.0.2",
     "openai": "^3.0.0"
   }
 }
