@@ -2,6 +2,8 @@
 
 Tired of writing commit messages? Let the computer do it for you!
 
+[![asciicast](https://asciinema.org/a/fpL5Dkd74xO8yRTM15O49zOF9.svg)](https://asciinema.org/a/fpL5Dkd74xO8yRTM15O49zOF9)
+
 ## Installation
 
 ```bash
