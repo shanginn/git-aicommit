@@ -24,6 +24,13 @@ const diff = execSync(
     {encoding: 'utf8'}
 );
 
+// if diff is empty exit
+if (!diff) {
+    console.error("Diff seems empty. Please commit manually.");
+    process.exit(1);
+}
+
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
