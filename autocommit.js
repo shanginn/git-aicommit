@@ -3,6 +3,7 @@
 require('dotenv').config();
 const {Configuration, OpenAIApi} = require("openai");
 const {execSync} = require("child_process");
+const readline = require("readline");
 
 try {
   execSync(
@@ -45,7 +46,8 @@ Generate a commit message to explain diff in each file:
 
 `;
 
-openai
+function generatePrompt() {
+  openai
   .createCompletion({
     prompt,
     model: "text-davinci-002",
@@ -60,14 +62,42 @@ openai
     stop: ["\n\n\n"],
   })
   .then((data) => {
-    const commitMessage = data.data.choices[0].text;
+    const commitMessage = data.data.choices[0].text.trim();
     const command = `git add --all && git commit -m "${commitMessage.replace(/"/g, '\\"')}"`;
 
-    if (!process.env.GIT_AI_AUTOCOMMIT) {
-      console.log(`Please set GIT_AI_AUTOCOMMIT to commit with following command:\n ${command}`);
-    } else {
+    // Check if process.env.GIT_AI_AUTOCOMMIT exists and is set to 1 or true, otherwise just warn.
+    if (process.env.GIT_AI_AUTOCOMMIT && process.env.GIT_AI_AUTOCOMMIT.match(/^(1|true)$/)) {
       console.log(`Committing with following command:\n ${command}`);
       execSync(command, {encoding: 'utf8'});
+    } else {
+      console.log(`Set GIT_AI_AUTOCOMMIT=1 to auto-commit. Proposing the following commit message:`);
+      console.log();
+      console.log();
+      console.error(commitMessage);
+      console.log();
+      console.log();
+
+      if (process.env.GIT_AI_AUTOCOMMIT && process.env.GIT_AI_AUTOCOMMIT.match(/^(ask)$/)) {
+        // Ask if want to run
+        const input = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout
+        });
+        input.question(`Commit with the above message? [y/r/N]: `, (answer) => {
+          if (answer.match(/^(y|Y)$/)) {
+            console.log(`Committing with following command:\n ${command}`);
+            execSync(command, {encoding: 'utf8'});
+          } else if (answer.match(/^(r|R)$/)) {
+            generatePrompt();
+          } else {
+            console.log("Not committing.");
+          }
+          input.close();
+        });
+      }
+
     }
   });
+}
 
+generatePrompt();
