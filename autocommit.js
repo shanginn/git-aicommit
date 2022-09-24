@@ -37,11 +37,11 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 // create a prompt
-const prompt = `Read the following git diff for a multiple files:
+const prompt = `Given the following git diff(s):
 
 ${diff}
 
-Generate a commit message to explain diff in each file:
+Write a human Git commit message with title (no quotes!) to explain the change:
 
 `;
 
@@ -60,7 +60,7 @@ openai
     stop: ["\n\n\n"],
   })
   .then((data) => {
-    const commitMessage = data.data.choices[0].text;
+    const commitMessage = data.data.choices[0].text.trim();
     const command = `git add --all && git commit -m "${commitMessage.replace(/"/g, '\\"')}"`;
 
     if (!process.env.GIT_AI_AUTOCOMMIT) {
