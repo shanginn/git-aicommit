@@ -4,7 +4,7 @@ module.exports = {
     autocommit: true,
     openCommitTextEditor: false,
     promptBeforeDiff: 'Read the following git diff for a multiple files:',
-    promptAfterDiff: 'Generate 1 to 3 paragraphs to explain this diff to a human:',
+    promptAfterDiff: 'Generate 1 to 3 paragraphs to explain this diff to a human without mentioning changes themselves:',
     excludeFromDiff: [
         '*.lock'
     ],
