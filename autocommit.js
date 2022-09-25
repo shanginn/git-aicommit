@@ -2,7 +2,23 @@
 
 require('dotenv').config();
 const {Configuration, OpenAIApi} = require("openai");
-const {execSync} = require("child_process");
+const {execSync, spawn} = require("child_process");
+
+const os = require('os');
+const fs = require('fs');
+
+const configFilename = process.env.GIT_AI_COMMIT_CONFIG_NAME || '.git-ai-commit-config.js';
+const configPath = os.homedir() + '/' + configFilename;
+
+// if (!fs.existsSync(configPath)) {
+//     TODO: param to create default config file
+//     const { defaultConfig } = require('./config.js');
+//
+//     fs.writeFileSync(configPath, `module.exports = ${JSON.stringify(defaultConfig, null, 4)}`);
+//     console.log(`Created default config file at ${configPath}`);
+// }
+
+const config = !fs.existsSync(configPath) ? require('./config.js') : require(configPath);
 
 try {
   execSync(
@@ -14,60 +30,67 @@ try {
   process.exit(1);
 }
 
-if (!process.env.OPENAI_API_KEY) {
+if (!config.openAiKey) {
   console.error("Please set OPENAI_API_KEY");
   process.exit(1);
 }
 
-const diff = execSync(
-    `git diff -- . ':(exclude)*.lock' 2>/dev/null`,
-    {encoding: 'utf8'}
-);
+const excludeFromDiff = config.excludeFromDiff || [];
+const diffFilter = config.diffFilter || 'ACMRTUXB';
+const diffCommand = `git diff \
+    --diff-filter=${diffFilter} \
+    ${excludeFromDiff.map((pattern) => `-- ':(exclude)${pattern}'`).join(' ')} \
+    2>/dev/null
+`;
+
+const diff = execSync(diffCommand, {encoding: 'utf8'});
 
 if (!diff) {
     console.error("Diff seems empty. Please commit manually.");
     process.exit(1);
 }
 
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
+const openai = new OpenAIApi(new Configuration({
+    apiKey: config.openAiKey,
+}));
 
 // create a prompt
-const prompt = `Read the following git diff for a multiple files:
+const prompt = `${config.promptBeforeDiff}
 
 ${diff}
 
-Generate a commit message to explain diff in each file:
+${config.promptAfterDiff}
 
 `;
 
 openai
   .createCompletion({
     prompt,
-    model: "text-davinci-002",
-    max_tokens: 500,
-    temperature: 0.2,
-    top_p: 1,
-    presence_penalty: 0,
-    frequency_penalty: 0,
-    best_of: 1,
-    n: 1,
-    stream: false,
-    stop: ["\n\n\n"],
+    ...config.completionPromptParams
   })
   .then((data) => {
     const commitMessage = data.data.choices[0].text;
-    const command = `git add --all && git commit -m "${commitMessage.replace(/"/g, '\\"')}"`;
 
-    if (!process.env.GIT_AI_AUTOCOMMIT) {
-      console.log(`Please set GIT_AI_AUTOCOMMIT to commit with following command:\n ${command}`);
+    if (!config.addAllChangesBeforeCommit) {
+        console.log('addAllChangesBeforeCommit is false. Skipping git add --all');
     } else {
-      console.log(`Committing with following command:\n ${command}`);
-      execSync(command, {encoding: 'utf8'});
+        execSync('git add --all', {encoding: 'utf8'});
+    }
+
+    if (!config.autocommit) {
+      console.log(`Autocommit is disabled. Here is the message:\n ${commitMessage}`);
+    } else {
+      console.log(`Committing with following message:\n ${commitMessage}`);
+      execSync(
+          `git commit -m "${commitMessage.replace(/"/g, '')}"`,
+          {encoding: 'utf8'}
+      );
+
+        if (config.openCommitTextEditor) {
+            spawn('git', ['commit', '--amend'], {
+                stdio: 'inherit'
+            });
+        }
     }
   });
 
