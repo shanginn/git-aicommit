@@ -14,19 +14,26 @@ npm install -g git-aicommit
 
 ## Configuration
 
-You can override config file location by setting `GIT_AI_COMMIT_CONFIG` environment variable.
-Defaults lookup location is `~/.git-ai-commit-config.js`.
+This cli tool uses [standard rc files](https://www.npmjs.com/package/rc#standards):
+
+- local `.git-aicommitrc`
+- `$HOME/.git-aicommitrc`
+- `$HOME/.git-aicommit/config`
+- `$HOME/.config/git-aicommit`
+- `$HOME/.config/git-aicommit/config`
+- `/etc/git-aicommitrc`
+- `/etc/git-aicommit/config`
 
 Or [default config](config.js) is used if no config file is found.
 
 To override default config, create a config file and export an object with the following properties:
 
 ```bash
-touch ~/.git-ai-commit-config.js
+touch $HOME/.git-aicommitrc
 ```
 
 ```js
-// ~/.git-ai-commit-config.js
+// $HOME/.git-aicommitrc
 module.exports = {
     openAiKey: process.env.OPENAI_API_KEY,
     addAllChangesBeforeCommit: true,
@@ -53,8 +60,11 @@ module.exports = {
 }
 ```
 
+### Command line arguments
 
-
+```bash
+git-aicommit --openAiKey="sk-..." --completionPromptParams.temperature=0.3 --no-autocommit
+```
 ## Usage
 
 ```bash

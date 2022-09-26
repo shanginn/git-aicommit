@@ -3,12 +3,9 @@
 require('dotenv').config();
 const {Configuration, OpenAIApi} = require("openai");
 const {execSync, spawn} = require("child_process");
+const rc = require('rc');
 
-const os = require('os');
-const fs = require('fs');
-
-const configFilename = process.env.GIT_AI_COMMIT_CONFIG_NAME || '.git-ai-commit-config.js';
-const configPath = os.homedir() + '/' + configFilename;
+const defaultConfig = require('./config.js');
 
 // if (!fs.existsSync(configPath)) {
 //     TODO: param to create default config file
@@ -18,7 +15,7 @@ const configPath = os.homedir() + '/' + configFilename;
 //     console.log(`Created default config file at ${configPath}`);
 // }
 
-const config = !fs.existsSync(configPath) ? require('./config.js') : require(configPath);
+const config = rc('git-aicommit', defaultConfig);
 
 try {
   execSync(

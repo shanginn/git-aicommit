@@ -1,6 +1,6 @@
 {
   "name": "git-aicommit",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Generates auto commit messages with OpenAI GPT3 model",
   "main": "autocommit.js",
   "repository": "https://github.com/shanginn/autocommit",
@@ -8,7 +8,8 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.2",
-    "openai": "^3.0.0"
+    "openai": "^3.0.0",
+    "rc": "1.2.8"
   },
   "preferGlobal": true,
   "bin": {
