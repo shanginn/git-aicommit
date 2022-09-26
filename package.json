@@ -8,7 +8,8 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.2",
-    "openai": "^3.0.0"
+    "openai": "^3.0.0",
+    "rc": "1.2.8"
   },
   "preferGlobal": true,
   "bin": {
