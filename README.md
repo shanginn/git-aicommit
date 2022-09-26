@@ -14,10 +14,23 @@ npm install -g git-aicommit
 
 ## Configuration
 
-This cli tool uses configuration file located where `GIT_AI_COMMIT_CONFIG_NAME` points at,
-defaults to `~/.git-ai-commit-config.js`.
+This cli tool uses [standard rc files](https://www.npmjs.com/package/rc#standards):
+
+- local `.git-aicommitrc`
+- `$HOME/.git-aicommitrc`
+- `$HOME/.git-aicommit/config`
+- `$HOME/.config/git-aicommit`
+- `$HOME/.config/git-aicommit/config`
+- `/etc/git-aicommitrc`
+- `/etc/git-aicommit/config`
 
 Or [default config](config.js) is used if no config file is found.
+
+### Command line arguments
+
+```bash
+git-aicommit --openAiKey="sk-..." --completionPromptParams.temperature=0.3 --no-autocommit
+```
 
 ## Usage
 
