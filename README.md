@@ -22,7 +22,7 @@ Or [default config](config.js) is used if no config file is found.
 To override default config, create a config file and export an object with the following properties:
 
 ```bash
-tocuh ~/.git-ai-commit-config.js
+touch ~/.git-ai-commit-config.js
 ```
 
 ```js
