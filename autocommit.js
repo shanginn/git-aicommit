@@ -15,7 +15,12 @@ const defaultConfig = require('./config.js');
 //     console.log(`Created default config file at ${configPath}`);
 // }
 
-const config = rc('git-aicommit', defaultConfig);
+const config = rc(
+    'git-aicommit',
+    defaultConfig,
+    null,
+    (content) => eval(content) // not good. but is it different from require()?
+);
 
 try {
   execSync(
