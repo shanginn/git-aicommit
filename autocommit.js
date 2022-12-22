@@ -24,8 +24,8 @@ const config = rc(
 
 try {
   execSync(
-    'git rev-parse --is-inside-work-tree 2>/dev/null',
-    {encoding: 'utf8'}
+    'git rev-parse --is-inside-work-tree',
+    {encoding: 'utf8', stdio: 'ignore'}
   );
 } catch (e) {
   console.error("This is not a git repository");
@@ -41,8 +41,7 @@ const excludeFromDiff = config.excludeFromDiff || [];
 const diffFilter = config.diffFilter || 'ACMRTUXB';
 const diffCommand = `git diff \
     --diff-filter=${diffFilter} \
-    ${excludeFromDiff.map((pattern) => `-- ':(exclude)${pattern}'`).join(' ')} \
-    2>/dev/null
+    ${excludeFromDiff.map((pattern) => `-- ":(exclude)${pattern}"`).join(' ')}
 `;
 
 const diff = execSync(diffCommand, {encoding: 'utf8'});
@@ -71,7 +70,7 @@ openai
     ...config.completionPromptParams
   })
   .then((data) => {
-    const commitMessage = data.data.choices[0].text;
+    const commitMessage = data.data.choices[0].text.trim();
 
     if (!config.addAllChangesBeforeCommit) {
         console.log('addAllChangesBeforeCommit is false. Skipping git add --all');
@@ -95,4 +94,3 @@ openai
         }
     }
   });
-
