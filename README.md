@@ -8,8 +8,10 @@ Tired of writing commit messages? Let the computer do it for you!
 
 ## Installation
 
+It's recommended to use [bun](https://bun.sh/)
+
 ```bash
-npm install -g git-aicommit
+bun install -g git-aicommit
 ```
 
 ## Configuration
