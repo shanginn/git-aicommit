@@ -1,7 +1,7 @@
 export default {
     openAiKey: process.env.OPENAI_API_KEY,
     addAllChangesBeforeCommit: true,
-    autocommit: false,
+    autocommit: true,
     openCommitTextEditor: false,
     language: 'english',
     systemMessagePromptTemplate: '' +
