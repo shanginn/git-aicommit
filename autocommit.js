@@ -50,7 +50,7 @@ if (!diff) {
 
 const openai = new ChatOpenAI({
     modelName: config.modelName,
-    apiKey: config.openAiKey,
+    openAIApiKey: config.openAiKey,
     temperature: config.temperature,
     maxTokens: config.maxTokens,
 });
