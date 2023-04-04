@@ -34,28 +34,30 @@ touch $HOME/.git-aicommitrc
 
 ```js
 // $HOME/.git-aicommitrc
-module.exports = {
+export default {
     openAiKey: process.env.OPENAI_API_KEY,
     addAllChangesBeforeCommit: true,
     autocommit: true,
     openCommitTextEditor: false,
-    promptBeforeDiff: 'Read the following git diff for a multiple files:',
-    promptAfterDiff: 'Generate 1 to 3 paragraphs to explain this diff to a human without mentioning changes themselves:',
+    language: 'english',
+    systemMessagePromptTemplate: '' +
+        'You are expert AI, your job is to write clear and concise Git commit messages.' +
+        'Your responsibility is to ensure that these messages accurately describe the changes made in each commit,' +
+        'follow established guidelines. Provide a clear history of changes to the codebase.' +
+        'Write 1-2 sentences. Output only the commit message without comments or other text.',
+    humanPromptTemplate: '' +
+        'Read the following git diff for a multiple files and ' +
+        'write 1-2 sentences commit message in {language}' +
+        'without mentioning lines or files:\n' +
+        '{diff}',
     excludeFromDiff: [
-        '*.lock'
+        '*.lock', '*.lockb'
     ],
     diffFilter: 'ACMRTUXB',
     completionPromptParams: {
-        model: "text-davinci-002",
-        max_tokens: 500,
-        temperature: 0.2,
-        top_p: 1,
-        presence_penalty: 0,
-        frequency_penalty: 0,
-        best_of: 1,
-        n: 1,
-        stream: false,
-        stop: ["\n\n\n"],
+        model: "gpt-3.5-turbo",
+        temperature: 0.0,
+        maxTokens: 1000,
     }
 }
 ```
