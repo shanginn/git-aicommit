@@ -1,25 +1,20 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
-require('dotenv').config();
-const {Configuration, OpenAIApi} = require("openai");
-const {execSync, spawn} = require("child_process");
-const rc = require('rc');
+import { execSync, spawn } from "child_process";
+import rc from 'rc';
+import { ChatOpenAI } from "langchain/chat_models";
+import {ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate} from "langchain/prompts";
+import defaultConfig from './config.js';
+import dotenv from 'dotenv';
 
-const defaultConfig = require('./config.js');
-
-// if (!fs.existsSync(configPath)) {
-//     TODO: param to create default config file
-//     const { defaultConfig } = require('./config.js');
-//
-//     fs.writeFileSync(configPath, `module.exports = ${JSON.stringify(defaultConfig, null, 4)}`);
-//     console.log(`Created default config file at ${configPath}`);
-// }
+dotenv.config();
 
 const config = rc(
     'git-aicommit',
-    defaultConfig,
-    null,
-    (content) => eval(content) // not good. but is it different from require()?
+    {
+        ...defaultConfig,
+        openAiKey: process.env.OPENAI_API_KEY,
+    },
 );
 
 try {
@@ -39,9 +34,11 @@ if (!config.openAiKey) {
 
 const excludeFromDiff = config.excludeFromDiff || [];
 const diffFilter = config.diffFilter || 'ACMRTUXB';
-const diffCommand = `git diff \
+const diffCommand = `git diff --staged \
     --diff-filter=${diffFilter} \
-    ${excludeFromDiff.map((pattern) => `-- ":(exclude)${pattern}"`).join(' ')}
+    -- "${excludeFromDiff.map(
+        (pattern) => `:(exclude)${pattern}`
+    ).join(' ')}"
 `;
 
 const diff = execSync(diffCommand, {encoding: 'utf8'});
@@ -51,46 +48,43 @@ if (!diff) {
     process.exit(1);
 }
 
-const openai = new OpenAIApi(new Configuration({
+const openai = new ChatOpenAI({
+    modelName: config.modelName,
     apiKey: config.openAiKey,
-}));
+    temperature: config.temperature,
+    maxTokens: config.maxTokens,
+});
 
-// create a prompt
-const prompt = `${config.promptBeforeDiff}
+const systemMessagePromptTemplate = SystemMessagePromptTemplate.fromTemplate(config.systemMessagePromptTemplate)
+const humanPromptTemplate = HumanMessagePromptTemplate.fromTemplate(config.humanPromptTemplate)
 
-${diff}
+const chatPrompt = ChatPromptTemplate.fromPromptMessages([
+    systemMessagePromptTemplate,
+    humanPromptTemplate,
+])
 
-${config.promptAfterDiff}
+const prompt = await chatPrompt.formatMessages({
+    diff: diff,
+    language: config.language,
+})
 
-`;
+const res = await openai.call(prompt)
 
-openai
-  .createCompletion({
-    prompt,
-    ...config.completionPromptParams
-  })
-  .then((data) => {
-    const commitMessage = data.data.choices[0].text.trim();
+const commitMessage = res.text.trim();
 
-    if (!config.addAllChangesBeforeCommit) {
-        console.log('addAllChangesBeforeCommit is false. Skipping git add --all');
-    } else {
-        execSync('git add --all', {encoding: 'utf8'});
-    }
 
-    if (!config.autocommit) {
-      console.log(`Autocommit is disabled. Here is the message:\n ${commitMessage}`);
-    } else {
-      console.log(`Committing with following message:\n ${commitMessage}`);
-      execSync(
-          `git commit -m "${commitMessage.replace(/"/g, '')}"`,
-          {encoding: 'utf8'}
-      );
+if (!config.autocommit) {
+    console.log(`Autocommit is disabled. Here is the message:\n ${commitMessage}`);
+} else {
+    console.log(`Committing with following message:\n ${commitMessage}`);
+    execSync(
+        `git commit -m "${commitMessage.replace(/"/g, '')}"`,
+        {encoding: 'utf8'}
+    );
+}
 
-        if (config.openCommitTextEditor) {
-            spawn('git', ['commit', '--amend'], {
-                stdio: 'inherit'
-            });
-        }
-    }
-  });
+if (config.openCommitTextEditor) {
+    spawn('git', ['commit', '--amend'], {
+        stdio: 'inherit'
+    });
+}
