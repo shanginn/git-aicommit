@@ -76,16 +76,13 @@ const chatPrompt = ChatPromptTemplate.fromPromptMessages([
 ]);
 
 if (diff.length > 2000) {
-    const splitDiff = diff.split('diff --git ');
-
     const filenameRegex = /^a\/(.+?)\s+b\/(.+?)/;
-
-    // extract filenames with content in an object from splitDiff
-    const diffByFiles = splitDiff
+    const diffByFiles = diff
+        .split('diff ' + '--git ') // Wierd string concat in order to avoid splitting on this line when using autocommit in this repo :)
         .filter((fileDiff) => fileDiff.length > 0)
         .map((fileDiff) => {
             const match = fileDiff.match(filenameRegex);
-            const filename = match[1] || 'unknown';
+            const filename = match ? match[1] : 'Unknown file';
 
             const content = fileDiff
                 .replaceAll(filename, '')
