@@ -8,10 +8,10 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "dotenv": "^16.0.2",
-    "langchain": "^0.0.47",
-    "openai": "^3.0.0",
-    "rc": "1.2.8"
+    "@dqbd/tiktoken": "^1.0.6",
+    "langchain": "^0.0.59",
+    "openai": "^3.2.1",
+    "rc": "^1.2.8"
   },
   "preferGlobal": true,
   "bin": {
