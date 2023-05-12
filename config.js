@@ -1,5 +1,9 @@
 export default {
     openAiKey: process.env.OPENAI_API_KEY,
+    azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY,
+    azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
+    azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
+    azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION,
     addAllChangesBeforeCommit: true,
     autocommit: true,
     openCommitTextEditor: false,
