@@ -34,8 +34,7 @@ try {
   process.exit(1);
 }
 
-if (!config.openAiKey && !config.azureOpenAIApiKey
-    && !process.env.OPENAI_API_KEY && !process.env.AZURE_OPENAI_API_KEY) {
+if (!config.openAiKey && !config.azureOpenAIApiKey) {
   console.error("Please set OPENAI_API_KEY or AZURE_OPENAI_API_KEY");
   process.exit(1);
 }
