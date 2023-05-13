@@ -20,6 +20,7 @@ const config = rc(
     {
         ...defaultConfig,
         openAiKey: process.env.OPENAI_API_KEY,
+        azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY
     },
 );
 
@@ -33,8 +34,15 @@ try {
   process.exit(1);
 }
 
-if (!config.openAiKey) {
-  console.error("Please set OPENAI_API_KEY");
+if (!config.openAiKey && !config.azureOpenAiKey) {
+  console.error("Please set OPENAI_API_KEY or AZURE_OPENAI_API_KEY");
+  process.exit(1);
+}
+
+// if any settings related to AZURE are set, if there are items that are not set, will error.
+if (!(config.azureOpenAiKey && config.azureOpenAiInstanceName
+  && config.azureOpenAiDeploymentName && config.azureOpenAiVersion)){
+  console.error("Please set AZURE_OPENAI_API_KEY, AZURE_OPENAI_API_INSTANCE_NAME, AZURE_OPENAI_API_DEPLOYMENT_NAME, AZURE_OPENAI_API_VERSION when Azure OpenAI Service.");
   process.exit(1);
 }
 
@@ -58,6 +66,10 @@ if (!diff) {
 const openai = new ChatOpenAI({
     modelName: config.modelName,
     openAIApiKey: config.openAiKey,
+    azureOpenAIApiKey: config.azureOpenAiKey,
+    azureOpenAIApiInstanceName: config.azureOpenAiInstanceName,
+    azureOpenAIApiDeploymentName: config.azureOpenAiDeploymentName,
+    azureOpenAIApiVersion: config.azureOpenAiVersion,
     temperature: config.temperature,
     maxTokens: config.maxTokens,
 });
