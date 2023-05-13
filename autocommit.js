@@ -46,6 +46,17 @@ if (!(config.azureOpenAiKey && config.azureOpenAiInstanceName
   process.exit(1);
 }
 
+if ( config.addAllChangesBeforeCommit ) {
+  const lsFilesModifiedCommand = 'git ls-files --modified';
+  const modifiedFiles = execSync(lsFilesModifiedCommand, {encoding: 'utf8'});
+  const files = [ ...modifiedFiles.split('\n') ].filter((file) => !!file);
+  if ( files.length !== 0 ) {
+    console.log(`Add modified files: ${files.join(' ')}`);
+    const addCommand = `git add ${files.join(' ')}`;
+    const addMessage = execSync(addCommand, {encoding: 'utf8'});
+  }
+}
+
 const excludeFromDiff = config.excludeFromDiff || [];
 const diffFilter = config.diffFilter || 'ACMRTUXB';
 const diffCommand = `git diff --staged \
