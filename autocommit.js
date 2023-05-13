@@ -38,6 +38,7 @@ if (!config.openAiKey && !config.azureOpenAiKey) {
   console.error("Please set OPENAI_API_KEY or AZURE_OPENAI_API_KEY");
   process.exit(1);
 }
+
 // if any settings related to AZURE are set, if there are items that are not set, will error.
 if (!(config.azureOpenAiKey && config.azureOpenAiInstanceName
   && config.azureOpenAiDeploymentName && config.azureOpenAiVersion)){
