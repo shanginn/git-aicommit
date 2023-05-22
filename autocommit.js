@@ -51,9 +51,9 @@ const diffFilter = config.diffFilter || 'ACMRTUXB';
 const diffCommand = `git diff --staged \
     --no-ext-diff \
     --diff-filter=${diffFilter} \
-    -- "${excludeFromDiff.map(
-        (pattern) => `:(exclude)${pattern}`
-    ).join(' ')}"
+    -- ${excludeFromDiff.map(
+        (pattern) => `':(exclude)${pattern}'`
+    ).join(' ')}
 `;
 
 let diff = execSync(diffCommand, {encoding: 'utf8'});
@@ -88,6 +88,7 @@ const chatPrompt = ChatPromptTemplate.fromPromptMessages([
 ]);
 
 if (diff.length > 2000) {
+    console.log('Diff is too long. Splitting into multiple requests.')
     const filenameRegex = /^a\/(.+?)\s+b\/(.+?)/;
     const diffByFiles = diff
         .split('diff ' + '--git ') // Wierd string concat in order to avoid splitting on this line when using autocommit in this repo :)
@@ -106,6 +107,7 @@ if (diff.length > 2000) {
                     language: config.language,
                 })
                 .then((prompt) => {
+                    console.log(prompt)
                     return openai.call(prompt)
                         .then((res) => {
                             return {
