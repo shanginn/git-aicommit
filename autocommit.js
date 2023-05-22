@@ -40,8 +40,9 @@ if (!config.openAiKey && !config.azureOpenAiKey) {
 }
 
 // if any settings related to AZURE are set, if there are items that are not set, will error.
-if (!(config.azureOpenAiKey && config.azureOpenAiInstanceName
-  && config.azureOpenAiDeploymentName && config.azureOpenAiVersion)){
+if (config.azureOpenAiKey && !(
+    config.azureOpenAiInstanceName && config.azureOpenAiDeploymentName && config.azureOpenAiVersion
+)){
   console.error("Please set AZURE_OPENAI_API_KEY, AZURE_OPENAI_API_INSTANCE_NAME, AZURE_OPENAI_API_DEPLOYMENT_NAME, AZURE_OPENAI_API_VERSION when Azure OpenAI Service.");
   process.exit(1);
 }
