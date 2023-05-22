@@ -108,7 +108,6 @@ if (diff.length > 2000) {
                     language: config.language,
                 })
                 .then((prompt) => {
-                    console.log(prompt)
                     return openai.call(prompt)
                         .then((res) => {
                             return {
