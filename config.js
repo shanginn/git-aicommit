@@ -22,7 +22,7 @@ export default {
     ],
     diffFilter: 'ACMRTUXB',
     completionPromptParams: {
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-16k",
         temperature: 0.0,
         maxTokens: 1000,
     }
