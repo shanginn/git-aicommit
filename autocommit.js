@@ -9,11 +9,8 @@ import {
     SystemMessagePromptTemplate
 } from "langchain/prompts";
 import defaultConfig from './config.js';
-import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
-import {loadSummarizationChain} from "langchain/chains";
 import {ChatOpenAI} from "langchain/chat_models/openai";
-import {OpenAI} from "langchain/llms/openai";
-import fs from "fs";
+import {getModelContextSize} from "./count_tokens.js";
 
 const config = rc(
     'git-aicommit',
@@ -88,8 +85,17 @@ const chatPrompt = ChatPromptTemplate.fromPromptMessages([
     humanPromptTemplate,
 ]);
 
-if (diff.length > 2000) {
+const chatMessages = await chatPrompt.formatMessages({
+    diff: diff,
+    language: config.language,
+});
+
+const tokenCount = (await openai.getNumTokensFromMessages(chatMessages)).totalCount
+const contextSize = getModelContextSize(config.modelName)
+
+if (tokenCount > contextSize) {
     console.log('Diff is too long. Splitting into multiple requests.')
+    // TODO: split smarter
     const filenameRegex = /^a\/(.+?)\s+b\/(.+?)/;
     const diffByFiles = diff
         .split('diff ' + '--git ') // Wierd string concat in order to avoid splitting on this line when using autocommit in this repo :)

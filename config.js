@@ -15,15 +15,14 @@ export default {
     humanPromptTemplate: '' +
         'Read the following git diff for a multiple files and ' +
         'write 1-2 sentences commit message in {language}' +
-        'without mentioning lines or files:\n' +
+        'without mentioning lines or files.' +
+        'Explain why these changes were made (summarize the reasoning):\n' +
         '{diff}',
     excludeFromDiff: [
-        '*.lock', '*.lockb'
+        '*.lock', '*.lockb', '*-lock.json', '*-lock.yaml'
     ],
     diffFilter: 'ACMRTUXB',
-    completionPromptParams: {
-        model: "gpt-3.5-turbo-16k",
-        temperature: 0.0,
-        maxTokens: 1000,
-    }
+    modelName: "gpt-3.5-turbo-16k",
+    temperature: 0.0,
+    maxTokens: 2000,
 }

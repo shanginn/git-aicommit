@@ -1,23 +1,23 @@
 lockfileVersion: '6.0'
 
 dependencies:
-  '@dqbd/tiktoken':
-    specifier: ^1.0.7
-    version: 1.0.7
   langchain:
     specifier: ^0.0.75
     version: 0.0.75
   openai:
-    specifier: ^3.2.1
-    version: 3.2.1
+    specifier: ^3.3.0
+    version: 3.3.0
   rc:
     specifier: ^1.2.8
     version: 1.2.8
+  tiktoken:
+    specifier: ^1.0.8
+    version: 1.0.8
 
 packages:
 
-  /@anthropic-ai/sdk@0.4.3:
-    resolution: {integrity: sha512-SZrlXvjUUYT9rPmSzlTtmVk1OjVNpkCzILRluhiYwNcxXfQyvPJDi0CI6PyymygcgtqEF5EVqhKmC/PtPsNEIw==}
+  /@anthropic-ai/sdk@0.4.4:
+    resolution: {integrity: sha512-Z/39nQi1sSUCeLII3lsAbL1u+0JF6cR2XmUEX9sLH0VtxmIjY6cjOUYjCkYh4oapTxOkhAFnVSAFJ6cxml2qXg==}
     dependencies:
       '@fortaine/fetch-event-source': 3.0.6
       cross-fetch: 3.1.6
@@ -237,7 +237,7 @@ packages:
       weaviate-ts-client:
         optional: true
     dependencies:
-      '@anthropic-ai/sdk': 0.4.3
+      '@anthropic-ai/sdk': 0.4.4
       '@dqbd/tiktoken': 1.0.7
       ansi-styles: 5.2.0
       binary-extensions: 2.2.0
@@ -245,13 +245,13 @@ packages:
       expr-eval: 2.0.2
       flat: 5.0.2
       jsonpointer: 5.0.1
-      ml-distance: 4.0.0
+      ml-distance: 4.0.1
       object-hash: 3.0.0
-      openai: 3.2.1
+      openai: 3.3.0
       p-queue: 6.6.2
       p-retry: 4.6.2
       uuid: 9.0.0
-      yaml: 2.2.2
+      yaml: 2.3.1
       zod: 3.21.4
       zod-to-json-schema: 3.21.1(zod@3.21.4)
     transitivePeerDependencies:
@@ -291,8 +291,8 @@ packages:
     resolution: {integrity: sha512-yC9/2o8QF0A3m/0IXqCTXCzz2pNEzvmcE/9HFKOZGnTjatvBbsn4lWYJkxENkA4Ug2fnYl7PXQxnPi21sgMy/Q==}
     dev: false
 
-  /ml-distance@4.0.0:
-    resolution: {integrity: sha512-zj7+UGZpHk3uL7n79XTfGNUjIGnhLn8xVvrxYvBHvXFxo3jq1q+/UjP311hZxnLVhbxbXCjUniThX8gozjacYA==}
+  /ml-distance@4.0.1:
+    resolution: {integrity: sha512-feZ5ziXs01zhyFUUUeZV5hwc0f5JW0Sh0ckU1koZe/wdVkJdGxcP06KNQuF0WBTj8FttQUzcvQcpcrOp/XrlEw==}
     dependencies:
       ml-array-mean: 1.1.6
       ml-distance-euclidean: 2.0.0
@@ -328,8 +328,8 @@ packages:
     engines: {node: '>= 6'}
     dev: false
 
-  /openai@3.2.1:
-    resolution: {integrity: sha512-762C9BNlJPbjjlWZi4WYK9iM2tAVAv0uUp1UmI34vb0CN5T2mjB/qM6RYBmNKMh/dN9fC+bxqPwWJZUTWW052A==}
+  /openai@3.3.0:
+    resolution: {integrity: sha512-uqxI/Au+aPRnsaQRe8CojU0eCR7I0mBiKjD3sNMzY6DaC1ZVrc85u98mtJW6voDug8fgGN+DIZmTDxTthxb7dQ==}
     dependencies:
       axios: 0.26.1
       form-data: 4.0.0
@@ -385,6 +385,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
+  /tiktoken@1.0.8:
+    resolution: {integrity: sha512-bmATMbOd35gIiEJdmfKau1K6WnEodO78+sPY++WCZOXS19OYM0qas7LaoA/dvGqgg2W3eaTua32RHHnnbLPeNw==}
+    dev: false
+
   /tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
     dev: false
@@ -405,8 +409,8 @@ packages:
       webidl-conversions: 3.0.1
     dev: false
 
-  /yaml@2.2.2:
-    resolution: {integrity: sha512-CBKFWExMn46Foo4cldiChEzn7S7SRV+wqiluAb6xmueD/fGyRHIhX8m14vVGgeFWjN540nKCNVj6P21eQjgTuA==}
+  /yaml@2.3.1:
+    resolution: {integrity: sha512-2eHWfjaoXgTBC2jNM1LRef62VQa0umtvRiDSk6HSzW7RvS5YtkabJrwYLLEKWBc8a5U2PTSCs+dJjUTJdlHsWQ==}
     engines: {node: '>= 14'}
     dev: false
 
