@@ -1,27 +1,27 @@
-// langchain/dist/base_language/count_tokens.js
 export const getModelNameForTiktoken = (modelName) => {
     if (modelName.startsWith("gpt-3.5-turbo-16k")) {
         return "gpt-3.5-turbo-16k";
     }
+
     if (modelName.startsWith("gpt-3.5-turbo-")) {
         return "gpt-3.5-turbo";
     }
+
     if (modelName.startsWith("gpt-4-32k-")) {
         return "gpt-4-32k";
     }
+
     if (modelName.startsWith("gpt-4-")) {
         return "gpt-4";
     }
+
+    if (modelName.startsWith("gpt-4o-")) {
+        return "gpt-4o";
+    }
     return modelName;
 };
-export const getEmbeddingContextSize = (modelName) => {
-    switch (modelName) {
-        case "text-embedding-ada-002":
-            return 8191;
-        default:
-            return 2046;
-    }
-};
+
+
 export const getModelContextSize = (modelName) => {
     switch (getModelNameForTiktoken(modelName)) {
         case "gpt-3.5-turbo-16k":
@@ -32,33 +32,24 @@ export const getModelContextSize = (modelName) => {
             return 32768;
         case "gpt-4":
             return 8192;
-        case "text-davinci-003":
-            return 4097;
-        case "text-curie-001":
-            return 2048;
-        case "text-babbage-001":
-            return 2048;
-        case "text-ada-001":
-            return 2048;
-        case "code-davinci-002":
-            return 8000;
-        case "code-cushman-001":
-            return 2048;
+        case "gpt-4o":
+            return 128000;
         default:
-            return 4097;
+            return 4096;
     }
 };
+
 export const importTiktoken = async () => {
     try {
         const { encoding_for_model } = await import("@dqbd/tiktoken");
         return { encoding_for_model };
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
         return { encoding_for_model: null };
     }
 };
-export const calculateMaxTokens = async ({ prompt, modelName, }) => {
+
+export const calculateMaxTokens = async ({ prompt, modelName }) => {
     const { encoding_for_model } = await importTiktoken();
     // fallback to approximate calculation if tiktoken is not available
     let numTokens = Math.ceil(prompt.length / 4);
@@ -69,8 +60,7 @@ export const calculateMaxTokens = async ({ prompt, modelName, }) => {
             numTokens = tokenized.length;
             encoding.free();
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.warn("Failed to calculate number of tokens with tiktoken, falling back to approximate count", error);
     }
     const maxTokens = getModelContextSize(modelName);
