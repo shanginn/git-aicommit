@@ -9,7 +9,7 @@ Tired of writing commit messages? Let the computer do it for you!
 ## Installation
 
 ```bash
-npm install -g git-aicommit
+bun add -g git-aicommit
 ```
 
 ## Configuration
@@ -55,7 +55,7 @@ export default {
     ],
     diffFilter: 'ACMRTUXB',
     completionPromptParams: {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
         temperature: 0.0,
         maxTokens: 1000,
     }
@@ -83,6 +83,4 @@ alias gai='git-aicommit'
 gai
 ```
 
-It that simple!
-    
-
+It's that simple!
