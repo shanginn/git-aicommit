@@ -8,7 +8,7 @@ export default {
     openCommitTextEditor: false,
     language: 'english',
     systemMessagePromptTemplate: '' +
-        'You are expert AI, your job is to write clear and concise Git commit messages.' +
+        'You are expert software developer, your job is to write clear and concise Git commit messages. ' +
         'Your responsibility is to ensure that these messages accurately describe the changes made in each commit,' +
         'follow established guidelines. Provide a clear history of changes to the codebase.' +
         'Write 1-2 sentences. Output only the commit message without comments or other text.',
@@ -16,13 +16,13 @@ export default {
         'Read the following git diff for a multiple files and ' +
         'write 1-2 sentences commit message in {language}' +
         'without mentioning lines or files.' +
-        'Explain why these changes were made (summarize the reasoning):\n' +
+        'If the reason behind the changed can be deducted from the changed, provide this reason:\n' +
         '{diff}',
     excludeFromDiff: [
         '*.lock', '*.lockb', '*-lock.json', '*-lock.yaml'
     ],
     diffFilter: 'ACMRTUXB',
-    modelName: "gpt-3.5-turbo-16k",
+    modelName: "gpt-4o-mini",
     temperature: 0.0,
     maxTokens: 2000,
 }
