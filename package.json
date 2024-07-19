@@ -8,10 +8,9 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "langchain": "^0.0.75",
-    "openai": "^3.3.0",
+    "openai": "^4.52.7",
     "rc": "^1.2.8",
-    "tiktoken": "^1.0.8"
+    "tiktoken": "^1.0.15"
   },
   "preferGlobal": true,
   "bin": {
