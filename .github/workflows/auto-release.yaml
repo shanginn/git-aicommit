@@ -11,12 +11,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: debug
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: echo $NPM_CONFIG_TOKEN | base64 && exit 0
-
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
