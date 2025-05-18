@@ -12,27 +12,62 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Get Version from package.json
         id: get_version
-        run: echo "::set-output name=version::$(jq -r '.version' package.json)"
+        run: echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Check if tag exists
+      - name: Check if tag exists remotely
         id: check_tag
         run: |
-          EXISTS=$(git ls-remote --tags origin refs/tags/${{ steps.get_version.outputs.version }} | wc -l)
-          echo "::set-output name=exists::$EXISTS"
+          PACKAGE_VERSION="${{ steps.get_version.outputs.version }}"
+          TAG_NAME="v${PACKAGE_VERSION}" # Standard v-prefix for tags
+          echo "Checking for remote tag: ${TAG_NAME}"
+
+          TAG_EXISTS_COUNT=$(git ls-remote --tags origin "refs/tags/${TAG_NAME}" | wc -l)
+
+          if [ "$TAG_EXISTS_COUNT" -ne 0 ]; then
+            echo "Tag ${TAG_NAME} already exists remotely."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Tag ${TAG_NAME} does not exist remotely. Proceeding."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
         shell: bash
 
-      - name: Create Release if tag doesn't exist
-        if: steps.check_tag.outputs.exists == '0'
+      - name: Fail workflow if tag already exists
+        if: steps.check_tag.outputs.exists == 'true'
+        run: |
+          PACKAGE_VERSION="${{ steps.get_version.outputs.version }}"
+          TAG_NAME="v${PACKAGE_VERSION}"
+          echo "::error title=Tag Exists::Tag ${TAG_NAME} already exists. Halting release process."
+          exit 1 # This will fail the job and stop further execution
+        shell: bash
+
+      - name: Create Release (and Git Tag)
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: Release ${{ steps.get_version.outputs.version }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          release_name: Release v${{ steps.get_version.outputs.version }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3 # Can update to v4 if available and desired
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
