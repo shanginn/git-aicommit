@@ -1,6 +1,6 @@
 {
   "name": "git-aicommit",
-  "version": "7.2.2",
+  "version": "7.2.3",
   "description": "Generates auto commit messages with OpenAI GPT3 model",
   "main": "autocommit.js",
   "repository": "https://github.com/shanginn/autocommit",
