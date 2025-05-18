@@ -18,6 +18,10 @@ export const getModelNameForTiktoken = (modelName) => {
     if (modelName.startsWith("gpt-4o-")) {
         return "gpt-4o";
     }
+
+    if (modelName.startsWith("gpt-4.1")) {
+        return "gpt-4o";
+    }
     return modelName;
 };
 
@@ -51,18 +55,25 @@ export const importTiktoken = async () => {
 
 export const calculateMaxTokens = async ({ prompt, modelName }) => {
     const { encoding_for_model } = await importTiktoken();
-    // fallback to approximate calculation if tiktoken is not available
-    let numTokens = Math.ceil(prompt.length / 4);
+    let numTokens;
+
     try {
         if (encoding_for_model) {
             const encoding = encoding_for_model(getModelNameForTiktoken(modelName));
             const tokenized = encoding.encode(prompt);
             numTokens = tokenized.length;
             encoding.free();
+        } else {
+            console.warn("tiktoken is not available, falling back to approximate token count");
+
+            numTokens = Math.ceil(prompt.length / 4);
         }
     } catch (error) {
         console.warn("Failed to calculate number of tokens with tiktoken, falling back to approximate count", error);
+
+        numTokens = Math.ceil(prompt.length / 4);
     }
+
     const maxTokens = getModelContextSize(modelName);
     return maxTokens - numTokens;
 };
