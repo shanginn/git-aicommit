@@ -39,16 +39,18 @@ jobs:
           fi
         shell: bash
 
-      - name: Fail workflow if tag already exists
+      - name: Inform if tag already exists (and skip release)
         if: steps.check_tag.outputs.exists == 'true'
         run: |
           PACKAGE_VERSION="${{ steps.get_version.outputs.version }}"
           TAG_NAME="v${PACKAGE_VERSION}"
-          echo "::error title=Tag Exists::Tag ${TAG_NAME} already exists. Halting release process."
-          exit 1 # This will fail the job and stop further execution
+          echo "::notice title=Tag Exists::Tag ${TAG_NAME} already exists. Skipping release and publish steps."
         shell: bash
 
+      # --- Steps below will only run if the tag DOES NOT exist ---
+
       - name: Create Release (and Git Tag)
+        if: steps.check_tag.outputs.exists == 'false'
         uses: ncipollo/release-action@v1
         with:
           draft: false
@@ -59,14 +61,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Bun
+        if: steps.check_tag.outputs.exists == 'false'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
       - name: Install dependencies with Bun
+        if: steps.check_tag.outputs.exists == 'false'
         run: bun install --frozen-lockfile
 
       - name: Publish to npm with Bun
+        if: steps.check_tag.outputs.exists == 'false'
         run: bun publish
         env:
           BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
