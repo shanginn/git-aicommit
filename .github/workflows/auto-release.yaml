@@ -63,8 +63,6 @@ jobs:
       - name: Setup Bun
         if: steps.check_tag.outputs.exists == 'false'
         uses: oven-sh/setup-bun@v2
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         with:
           bun-version: latest
 
@@ -76,4 +74,4 @@ jobs:
         if: steps.check_tag.outputs.exists == 'false'
         run: bun publish
         env:
-          BUN_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
