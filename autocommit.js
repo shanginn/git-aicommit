@@ -58,12 +58,13 @@ if (!diff) {
 const openai = new OpenAI({
     apiKey: config.openAiKey,
     baseURL: config.azureOpenAiKey ? `https://${config.azureOpenAiInstanceName}.openai.azure.com/openai/deployments/${config.azureOpenAiDeploymentName}` : undefined,
-    defaultHeaders: config.azureOpenAiKey ? { 'api-key': config.azureOpenAiKey } : undefined
+    defaultHeaders: config.azureOpenAiKey ? { 'api-key': config.azureOpenAiKey } : undefined,
+    defaultQuery: config.azureOpenAiKey ? { 'api-version': config.azureOpenAiVersion } : undefined, // defaultQuery for api-version as per OpenAI SDK v4+ for Azure
 });
 
 async function getChatCompletion(messages) {
     const response = await openai.chat.completions.create({
-        model: config.modelName || 'gpt-4o-mini',
+        model: config.modelName || 'gpt-4.1-mini',
         messages: messages,
         temperature: config.temperature,
         max_tokens: config.maxTokens,
@@ -75,24 +76,21 @@ async function getChatCompletion(messages) {
 const systemMessage = { role: "system", content: config.systemMessagePromptTemplate };
 const userMessage = { role: "user", content: config.humanPromptTemplate.replace("{diff}", diff).replace("{language}", config.language) };
 
-const chatMessages = [systemMessage, userMessage];
-
 const tokenCount = await calculateMaxTokens({
     prompt: diff,
-    modelName: config.modelName || 'gpt-4o-mini'
+    modelName: config.modelName || 'gpt-4.1-mini'
 });
 
-const contextSize = getModelContextSize(config.modelName || 'gpt-4o-mini');
+const contextSize = getModelContextSize(config.modelName || 'gpt-4.1-mini');
 
 if (tokenCount > contextSize) {
-    console.log('Diff is too long. Please lower the amount of changes in the commit or switch to a model with bigger context size');
-
+    console.log('Diff is too long for the current model context. Please lower the amount of changes in the commit or switch to a model with a larger context window.');
     process.exit(1);
 }
 
 const messages = [
-    { role: "system", content: config.systemMessagePromptTemplate },
-    { role: "user", content: config.humanPromptTemplate.replace("{diff}", diff).replace("{language}", config.language) }
+    systemMessage,
+    userMessage
 ];
 
 const commitMessage = await getChatCompletion(messages);
@@ -101,10 +99,19 @@ if (!config.autocommit) {
     console.log(`Autocommit is disabled. Here is the message:\n ${commitMessage}`);
 } else {
     console.log(`Committing with following message:\n ${commitMessage}`);
-    execSync(
-        `git commit -m "${commitMessage.replace(/"/g, '')}"`,
-        {encoding: 'utf8'}
-    );
+    try {
+        execSync(
+            'git commit -F -',
+            {
+                input: commitMessage,
+                encoding: 'utf8',
+                stdio: 'inherit'
+            }
+        );
+    } catch (error) {
+        console.error("Failed to commit.", error);
+        process.exit(1);
+    }
 }
 
 if (config.openCommitTextEditor) {
