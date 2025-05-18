@@ -1,0 +1,38 @@
+name: Auto Release on Version Change
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get Version from package.json
+        id: get_version
+        run: echo "::set-output name=version::$(jq -r '.version' package.json)"
+        shell: bash
+
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          EXISTS=$(git ls-remote --tags origin refs/tags/${{ steps.get_version.outputs.version }} | wc -l)
+          echo "::set-output name=exists::$EXISTS"
+        shell: bash
+
+      - name: Create Release if tag doesn't exist
+        if: steps.check_tag.outputs.exists == '0'
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: Release ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
