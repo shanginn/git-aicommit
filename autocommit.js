@@ -67,7 +67,7 @@ async function getChatCompletion(messages) {
         model: config.modelName || 'gpt-4.1-mini',
         messages: messages,
         temperature: config.temperature,
-        max_tokens: config.maxTokens,
+        max_completion_tokens: config.maxTokens,
     });
 
     return response.choices[0].message.content.trim();
