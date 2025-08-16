@@ -22,7 +22,7 @@ export default {
         '*.lock', '*.lockb', '*-lock.json', '*-lock.yaml'
     ],
     diffFilter: 'ACMRTUXB',
-    modelName: "gpt-4.1-mini",
+    modelName: "gpt-5-mini",
     temperature: 0.0,
     maxTokens: 2000,
 }
