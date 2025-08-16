@@ -66,7 +66,6 @@ async function getChatCompletion(messages) {
     const response = await openai.chat.completions.create({
         model: config.modelName || 'gpt-4.1-mini',
         messages: messages,
-        temperature: config.temperature,
         max_completion_tokens: config.maxTokens,
     });
 
