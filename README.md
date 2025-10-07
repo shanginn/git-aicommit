@@ -43,6 +43,7 @@ export default {
     autocommit: true,
     openCommitTextEditor: false,
     language: 'english',
+    projectInstruction: null,
     systemMessagePromptTemplate: '' +
         'You are expert software developer, your job is to write clear and concise Git commit messages. ' +
         'Your responsibility is to ensure that these messages accurately describe the changes made in each commit,' +
@@ -50,19 +51,39 @@ export default {
         'Write 1-2 sentences. Output only the commit message without comments or other text.',
     humanPromptTemplate: '' +
         'Read the following git diff for a multiple files and ' +
-        'write 1-2 sentences commit message in {language}' +
-        'without mentioning lines or files.' +
-        'If the reason behind the changed can be deducted from the changed, provide this reason:\n' +
+        'write 1-2 sentences commit message in {language} ' +
+        'without mentioning lines or files. ' +
+        'If the reason behind the changed can be deducted from the changed, provide this reason.\n' +
+        'Current branch: {branch}\n' +
+        '{projectInstruction}\n' +
+        '{customInstruction}\n' +
+        'Git diff:\n' +
         '{diff}',
     excludeFromDiff: [
         '*.lock', '*.lockb', '*-lock.json', '*-lock.yaml'
     ],
     diffFilter: 'ACMRTUXB',
     modelName: "gpt-4.1-mini",
-    temperature: 0.0,
-    maxTokens: 2000,
+    completionPromptParams: {
+        maxTokens: 2000,
+    },
 }
+```
 
+### Prompt Template Variables
+
+The `humanPromptTemplate` supports the following variables:
+
+- `{diff}` - The git diff of staged changes
+- `{language}` - The language for the commit message (default: 'english')
+- `{branch}` - Current git branch name
+- `{projectInstruction}` - Project-level instructions (configurable via config file)
+- `{customInstruction}` - Custom instruction passed via command line
+
+Example usage with custom instruction:
+
+```bash
+git-aicommit added fix for issue #123
 ```
 
 ### Command line arguments

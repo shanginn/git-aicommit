@@ -15,6 +15,9 @@ const config = rc(
     },
 );
 
+// Parse command-line arguments (everything after the script name)
+const customInstruction = process.argv.slice(2).join(' ');
+
 try {
     execSync(
         'git rev-parse --is-inside-work-tree',
@@ -24,6 +27,9 @@ try {
     console.error("This is not a git repository");
     process.exit(1);
 }
+
+// Get current git branch name
+const branch = execSync('git rev-parse --abbrev-ref HEAD', {encoding: 'utf8'}).trim();
 
 if (!config.openAiKey && !config.azureOpenAiKey) {
     console.error("Please set OPENAI_API_KEY or AZURE_OPENAI_API_KEY");
@@ -73,7 +79,14 @@ async function getChatCompletion(messages) {
 }
 
 const systemMessage = { role: "system", content: config.systemMessagePromptTemplate };
-const userMessage = { role: "user", content: config.humanPromptTemplate.replace("{diff}", diff).replace("{language}", config.language) };
+const userPrompt = config.humanPromptTemplate
+    .replace("{diff}", diff)
+    .replace("{language}", config.language)
+    .replace("{branch}", branch)
+    .replace("{projectInstruction}", config.projectInstruction || '')
+    .replace("{customInstruction}", customInstruction || '');
+
+const userMessage = { role: "user", content: userPrompt };
 
 const tokenCount = await calculateMaxTokens({
     prompt: diff,
