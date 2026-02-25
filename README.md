@@ -36,10 +36,9 @@ touch $HOME/.git-aicommitrc
 // $HOME/.git-aicommitrc
 export default {
     openAiKey: process.env.OPENAI_API_KEY,
-    azureOpenAiKey: process.env.AZURE_OPENAI_API_KEY,
-    azureOpenAiInstanceName: process.env.AZURE_OPENAI_API_INSTANCE_NAME,
-    azureOpenAiDeploymentName: process.env.AZURE_OPENAI_API_DEPLOYMENT_NAME,
-    azureOpenAiVersion: process.env.AZURE_OPENAI_API_VERSION,
+    baseURL: process.env.OPENAI_BASE_URL || null,
+    defaultHeaders: null,
+    defaultQuery: null,
     autocommit: true,
     openCommitTextEditor: false,
     language: 'english',
@@ -105,6 +104,29 @@ alias gai="git add --all && git-aicommit && git push"
 
 ## And run it:
 gai
+```
+
+## Azure OpenAI Integration
+
+To use Azure OpenAI instead of the official OpenAI API, set the following environment variables:
+
+```bash
+export OPENAI_API_KEY="your-azure-api-key"
+export OPENAI_BASE_URL="https://<your-instance>.openai.azure.com/openai/deployments/<your-deployment>"
+export OPENAI_DEFAULT_HEADERS='{"api-key": "your-azure-api-key"}'
+export OPENAI_DEFAULT_QUERY='{"api-version": "2024-02-15-preview"}'
+```
+
+Or add them to your config file:
+
+```js
+// $HOME/.git-aicommitrc
+export default {
+    openAiKey: process.env.AZURE_OPENAI_API_KEY,
+    baseURL: process.env.AZURE_OPENAI_BASE_URL,
+    defaultHeaders: { 'api-key': process.env.AZURE_OPENAI_API_KEY },
+    defaultQuery: { 'api-version': '2024-02-15-preview' },
+}
 ```
 
 It's that simple!

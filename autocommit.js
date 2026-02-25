@@ -11,7 +11,9 @@ const config = rc(
     {
         ...defaultConfig,
         openAiKey: process.env.OPENAI_API_KEY,
-        azureOpenAIApiKey: process.env.AZURE_OPENAI_API_KEY
+        baseURL: process.env.OPENAI_BASE_URL,
+        defaultHeaders: process.env.OPENAI_DEFAULT_HEADERS ? JSON.parse(process.env.OPENAI_DEFAULT_HEADERS) : null,
+        defaultQuery: process.env.OPENAI_DEFAULT_QUERY ? JSON.parse(process.env.OPENAI_DEFAULT_QUERY) : null,
     },
 );
 
@@ -31,16 +33,8 @@ try {
 // Get current git branch name
 const branch = execSync('git rev-parse --abbrev-ref HEAD', {encoding: 'utf8'}).trim();
 
-if (!config.openAiKey && !config.azureOpenAiKey) {
-    console.error("Please set OPENAI_API_KEY or AZURE_OPENAI_API_KEY");
-    process.exit(1);
-}
-
-// if any settings related to AZURE are set, if there are items that are not set, will error.
-if (config.azureOpenAiKey && !(
-    config.azureOpenAiInstanceName && config.azureOpenAiDeploymentName && config.azureOpenAiVersion
-)){
-    console.error("Please set AZURE_OPENAI_API_KEY, AZURE_OPENAI_API_INSTANCE_NAME, AZURE_OPENAI_API_DEPLOYMENT_NAME, AZURE_OPENAI_API_VERSION when Azure OpenAI Service.");
+if (!config.openAiKey) {
+    console.error("Please set OPENAI_API_KEY");
     process.exit(1);
 }
 
@@ -63,9 +57,9 @@ if (!diff) {
 
 const openai = new OpenAI({
     apiKey: config.openAiKey,
-    baseURL: config.azureOpenAiKey ? `https://${config.azureOpenAiInstanceName}.openai.azure.com/openai/deployments/${config.azureOpenAiDeploymentName}` : undefined,
-    defaultHeaders: config.azureOpenAiKey ? { 'api-key': config.azureOpenAiKey } : undefined,
-    defaultQuery: config.azureOpenAiKey ? { 'api-version': config.azureOpenAiVersion } : undefined, // defaultQuery for api-version as per OpenAI SDK v4+ for Azure
+    baseURL: config.baseURL || undefined,
+    defaultHeaders: config.defaultHeaders || undefined,
+    defaultQuery: config.defaultQuery || undefined,
 });
 
 async function getChatCompletion(messages) {
