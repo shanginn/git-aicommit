@@ -73,5 +73,3 @@ jobs:
       - name: Publish to npm with Bun
         if: steps.check_tag.outputs.exists == 'false'
         run: bun publish
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
