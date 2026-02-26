@@ -1,2 +1,8 @@
 demo.svg
 .github
+node_modules
+.env
+bun.lockb
+.idea
+.log*
+.vscode
