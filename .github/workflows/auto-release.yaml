@@ -61,16 +61,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Bun
-        if: steps.check_tag.outputs.exists == 'false'
-        uses: oven-sh/setup-bun@v2
+#      - name: Setup Bun
+#        if: steps.check_tag.outputs.exists == 'false'
+#        uses: oven-sh/setup-bun@v2
+#        with:
+#          bun-version: latest
+#
+#      - name: Install dependencies with Bun
+#        if: steps.check_tag.outputs.exists == 'false'
+#        run: bun install --frozen-lockfile
+#
+#      - name: Publish to npm with Bun
+#        if: steps.check_tag.outputs.exists == 'false'
+#        run: bun publish
+
+      - name: Publish to npm
+        uses: actions/setup-node@v6
         with:
-          bun-version: latest
-
-      - name: Install dependencies with Bun
-        if: steps.check_tag.outputs.exists == 'false'
-        run: bun install --frozen-lockfile
-
-      - name: Publish to npm with Bun
-        if: steps.check_tag.outputs.exists == 'false'
-        run: bun publish
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm install --frozen-lockfile
+      - run: npm publish
